@@ -11,15 +11,29 @@ const uploadToCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return new Error("File path not available");
     // Upload File
-    const response = await cloudinary.v2.uploader.upload(localFilePath, {
-      resourceType: auto,
+    const response = await cloudinary.uploader.upload(localFilePath, {
+      resourceType: "auto",
     });
     // Uploaded Successfully
+    fs.unlinkSync(localFilePath);
     return response;
   } catch (error) {
     // Remove File If Upload Failed
     fs.unlinkSync(localFilePath);
+    throw error;
   }
 };
 
-export {uploadToCloudinary};
+const deleteFromCloudinary = async (deleteFiles) => {
+  try {
+    const response = await cloudinary.api.delete_resources(deleteFiles, {
+      type: "upload",
+      resource_type: "image",
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { uploadToCloudinary, deleteFromCloudinary };

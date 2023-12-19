@@ -1,4 +1,6 @@
 import express, { urlencoded } from "express";
+import { upload } from "./middlewares/multer.middleware.js";
+
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -20,9 +22,9 @@ import userRouter from "./routes/user.routes.js";
 
 app.use("/user", userRouter);
 
-app.listen(process.env.PORT || 5000, ()=>{
-  console.log(`Server Running at : ${process.env.PORT || 5000}`);
-})
 
+// app.listen(8000 || 5000, () => {
+//   console.log(`Server Running at : ${8000 || 5000}`);
+// });
 
 export default app;
