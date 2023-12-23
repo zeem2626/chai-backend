@@ -263,7 +263,7 @@ const changePassword = asyncHandler(async (req, res) => {
   }
 
   // Get user using "verifyJWT" middleware
-  const user = req.user;
+  const user = await User.findById(req.user._id);
 
   // if user not available
   if (!user) {
@@ -287,10 +287,23 @@ const changePassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password Changed Successfully"));
 });
 
+const getCurrentUser = asyncHandler(async(req,res)=>{
+  const user = req.user;
+
+  if(!user){
+    throw new ApiError(400, "Unauthorized access")
+  }
+
+  res.status(200).json(new ApiResponse(200, {user},"User Data Accessed"))
+
+})
+
+
 export {
   registerUser,
   loginUser,
   logoutUser,
   refreshAccessToken,
   changePassword,
+  getCurrentUser
 };
