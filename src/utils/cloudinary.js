@@ -24,7 +24,7 @@ const uploadToCloudinary = async (localFilePath) => {
   }
 };
 
-const deleteFromCloudinary = async (deleteFiles) => {
+const deleteFromCloudinary = async (...deleteFiles) => {
   try {
     const response = await cloudinary.api.delete_resources(deleteFiles, {
       type: "upload",
@@ -35,5 +35,23 @@ const deleteFromCloudinary = async (deleteFiles) => {
     console.log(error);
   }
 };
+const cloudinaryImageNameFromUrl = (url) => {
+  if (!url) {
+    return null;
+  }
+  let start = url.length - 1;
+  let end = start;
 
-export { uploadToCloudinary, deleteFromCloudinary };
+  while (start > 0) {
+    if (url[start] == ".") end = start - 1;
+    if (url[start] == "/") {
+      start++;
+      break;
+    }
+    start--;
+  }
+  // Return image name
+  return url.slice(start, end + 1);
+};
+
+export { uploadToCloudinary, deleteFromCloudinary, cloudinaryImageNameFromUrl };
