@@ -70,7 +70,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const uploadedImages = !deletedResponse
       ? "And uploaded images not deleted"
       : "";
-    
+
     throw new ApiError(500, `Error Creating User ${uploadedImages}!!`);
   }
 
@@ -79,15 +79,4 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, userCreated, "User Created Successfully"));
 });
 
-const loginUser = asyncHandler(async (req, res) => {
-  // Login
-  res.status(200).json({ message: "User Logged In" });
-});
-
-const checkFunc = asyncHandler(async (req, res) => {
-  const { username, email, id } = req.body;
-
-  res.json({Success: true})
-});
-
-export { registerUser, loginUser, checkFunc };
+export { registerUser };
