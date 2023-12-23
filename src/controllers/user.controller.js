@@ -37,7 +37,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Give Correct Details");
   }
 
-  // // If user exist
+  // If user exist
   const userExist = await User.findOne({ $or: [{ username }, { email }] });
   if (userExist) {
     throw new ApiError(409, "User with username or email already exists");
@@ -246,4 +246,51 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+const changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  // check old password and new password availability
+  if (
+    !oldPassword ||
+    !newPassword ||
+    oldPassword.trim() == "" ||
+    newPassword.trim() == ""
+  ) {
+    throw new ApiError(400, "Password required");
+  }
+  if (oldPassword == newPassword) {
+    throw new ApiError(400, "New password and old password are same");
+  }
+
+  // Get user using "verifyJWT" middleware
+  const user = req.user;
+
+  // if user not available
+  if (!user) {
+    throw new ApiError(400, "Unauthorized access, user not available");
+  }
+
+  // Check old password validation
+  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+  // If invalid old password
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Invalid old password");
+  }
+
+  // Save new password
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password Changed Successfully"));
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  changePassword,
+};
